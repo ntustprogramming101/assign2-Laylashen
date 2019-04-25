@@ -1,5 +1,3 @@
-void setup() {
-	size(640, 480, P2D);
 final int GAME_START=1;
 final int GAME_RUN=2;
 final int GAME_OVER=3;
@@ -8,10 +6,10 @@ int gameState=1;
 float knightX=-80;
 float knightY=int(random(2,6))*80; 
 
-float cabbageX=random(160,560);
-float cabbageY=floor(random(2,7))*80;
+float cabbageX=floor(random(0,8))*80;
+float cabbageY=floor(random(2,6))*80;
 
-float heartX=35;
+float heartX=-35;
 float heartY=35;
 float heartSpeed=70;
 
@@ -49,6 +47,8 @@ void setup() {
   imageMode(CENTER);
   image(knight,knightX,knightY);
   image(cabbage,cabbageX,cabbageY);
+  hogX=320;
+  hogY=120-hogWidth;
 
   
 }
@@ -68,10 +68,10 @@ void draw() {
         }
       }
       break;
+      
     
     case GAME_RUN:
       background(sky);
-      
       
       //draw sun 
       colorMode(RGB);
@@ -87,9 +87,10 @@ void draw() {
         
       //play heart
       imageMode(CENTER);
-      image(heart,heartX,heartY);
-      image(heart,heartX+heartSpeed,heartY);
-    
+      for(int i =0; i<heartSpeed*3; i+=heartSpeed){
+      image(heart,heartX+i,heartY);
+      }
+      
       //play soil
       imageMode(CORNERS);
       image(soil,0,160);
@@ -103,39 +104,34 @@ void draw() {
           knightX=-80;
         }
       //play hog
-      hogX=320;
-      hogY=120-hogWidth;
       image(groundhogIdle,hogX,hogY);
       
       //play cabbage
       image(cabbage,cabbageX,cabbageY);
       
       //hog hit knight
-      if(hogX<knightX+80 && hogY>knightY-80 && hogY<knightY+80){
-        image(groundhogIdle,320-hogWidth/2,120-hogHeight/2);
+      if(hogX<knightX+80 && hogX+80>knightX && hogY>knightY-80 && hogY<knightY+80){
+        hogX=320;
+        hogY=120-hogWidth;
+        image(groundhogIdle,hogX,hogY);
         //delete heart
         heartX-=heartSpeed;
       }
       
       //hog eat cabbage
       if ((hogY+80>cabbageY && hogY<cabbageY+80)&&(hogX+80>cabbageX && hogX<cabbageX+80)){
-        if(heartX==105){
-        //add heart 2
-        imageMode(CENTER);
+        cabbageY=7*80;
         heartX+=heartSpeed;
-        }else{
-        //add heart 3
-        imageMode(CENTER);
-        image(heart, heartX+heartSpeed*2, heartY);
         }
-      }
+      
       
       //to gameOver
-      if(heartX==-105){
+      if(heartX==-175){
         //no more heart
         gameState=GAME_OVER;
       }
       break;
+      
   		case GAME_OVER:
         image(gameOver,0,0);
         image(restartNormal,248,360);
@@ -143,15 +139,17 @@ void draw() {
             if(mousePressed){
               gameState=GAME_RUN;
               hogX=320;
-              hogY=120;
+              hogY=80;
+              heartX=-35;
+              heartY=35;
             }else{
               //hover
               image(restartHovered,248,360);
             }
           }
           break;
-    }
-}
+        }
+      }
 
 void keyPressed(){
   if (key==CODED){
